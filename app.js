@@ -83,7 +83,57 @@ app.delete("/:id", (req, res) => {
 
         if (!err) {
           // res.send(rows);
-          res.send(`Crud with the Record  ID: ${[req.params.id]} has been removed.`);
+          res.send(
+            `Crud with the Record  ID: ${[req.params.id]} has been removed.`
+          );
+        } else {
+          console.log(err);
+        }
+      }
+    );
+  });
+});
+
+// Add a record
+app.post("", (req, res) => {
+  pool.getConnection((err, connection) => {
+    if (err) throw err;
+    console.log(`connected as id ${connection.threadId}`);
+
+    const params = req.body;
+
+    // query(sqlString , callback)
+    connection.query("INSERT INTO crud SET ?", params, (err, rows) => {
+      connection.release(); // return the connection to pool
+
+      if (!err) {
+        // res.send(rows);
+        res.send(`Crud with the name: ${params.name} has been added.`);
+      } else {
+        console.log(err);
+      }
+    });
+  });
+});
+
+// Update a record
+app.put("", (req, res) => {
+  pool.getConnection((err, connection) => {
+    if (err) throw err;
+    console.log(`connected as id ${connection.threadId}`);
+
+    const { id, name, tagline, description, image } = req.body;
+
+    // query(sqlString , callback)
+    connection.query(
+      "UPDATE crud SET name = ?, tagline = ?, description = ?, image = ? WHERE id = ?",
+      [name, id],
+      (err, rows) => {
+        connection.release(); // return the connection to pool
+
+        if (!err) {
+          // res.send(rows);
+          res.send(`Crud with the name: ${name} has been added.`);
         } else {
           console.log(err);
         }
